@@ -84,27 +84,58 @@ function App() {
     : 0;
 
   // Send metrics to the backend using fetch (you can switch to axios if preferred)
+  // const saveToDatabase = async () => {
+  //   if (events.length === 0) {
+  //     alert("No keystroke data to save!");
+  //     return;
+  //   }
+  //   const dataToSend = { dwellAvg, flightAvg, trajAvg };
+  //   try {
+  //     const response = await fetch('http://localhost:8000/api/save-metrics', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(dataToSend),
+  //     });
+  //     const result = await response.json();
+  //     console.log('Metrics saved:', result);
+  //     alert('Keystroke metrics saved to the database!');
+  //     // Clear events and reset text field so the placeholder appears
+  //     setEvents([]);
+  //     setText("");
+  //   } catch (error) {
+  //     console.error('Error saving metrics:', error);
+  //     alert('Error saving metrics. See console for details.');
+  //   }
+  // };
   const saveToDatabase = async () => {
     if (events.length === 0) {
       alert("No keystroke data to save!");
       return;
     }
-    const dataToSend = { dwellAvg, flightAvg, trajAvg };
+  
+    const dataToSend = { dwellAvg,flightAvg,trajAvg};
+  
     try {
-      const response = await fetch('http://localhost:5000/api/save-metrics', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:8000/api/save-metrics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSend),
       });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
       const result = await response.json();
-      console.log('Metrics saved:', result);
-      alert('Keystroke metrics saved to the database!');
-      // Clear events and reset text field so the placeholder appears
+      console.log("Metrics saved:", result);
+      alert("Keystroke metrics saved to the database!");
+  
+      // Clear input fields after saving
       setEvents([]);
       setText("");
     } catch (error) {
-      console.error('Error saving metrics:', error);
-      alert('Error saving metrics. See console for details.');
+      console.error("Error saving metrics:", error);
+      alert("Error saving metrics. See console for details.");
     }
   };
 

@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const serverless = require('serverless-http');
+const models = require('./models/MetricsTable')
 
 const app = express();
 app.use(express.json());
@@ -10,14 +11,17 @@ app.use(cors());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("Connected to MongoDB Atlas"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // API Route
-app.post('/save-metrics', async (req, res) => {
+app.post('/api/save-metrics', async (req, res) => {
+
   try {
-    console.log("Received Data:", req.body);
-    res.status(201).json({ message: "Metrics saved successfully" });
+    const {dwellAvg,flightAvg,trajAvg} = req.body
+    const creation = await models.create({dwellAvg,flightAvg,trajAvg})
+    //const result = await models.deleteMany({});
+    res.status(200).json({creation})
   } catch (error) {
     console.error("Error saving data:", error);
     res.status(500).json({ message: "Failed to save metrics", error });
@@ -29,6 +33,8 @@ app.get('/', (req, res) => {
   res.json("Vanakkam");
 });
 
+app.listen(process.env.PORT,()=>{console.log("Port running on port 5000")});
+
 // Export the handler for Vercel
-module.exports = app;
+module.exports= app;
 module.exports.handler = serverless(app);
