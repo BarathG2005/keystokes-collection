@@ -111,6 +111,10 @@ function App() {
     if (events.length === 0) {
       alert("No keystroke data to save!");
       return;
+
+
+
+      
     }
   
     const dataToSend = { dwellAvg,flightAvg,trajAvg};
