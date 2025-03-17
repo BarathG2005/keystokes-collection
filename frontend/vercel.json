@@ -10,7 +10,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://keystokes-collection.vercel.app/api/$1"
+      "destination": "https://keystokes-collection.vercel.app/"
     },
     {
       "source": "/(.*)",
