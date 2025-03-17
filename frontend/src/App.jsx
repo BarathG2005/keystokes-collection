@@ -155,6 +155,7 @@ function App() {
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
         placeholder="Start typing here..."
+        id='search'
         className="w-full p-4 mb-6 border-2 border-gray-400 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-4 focus:ring-yellow-400 transition-all duration-300"
       />
       <div className="mb-6">
