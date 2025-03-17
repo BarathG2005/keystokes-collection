@@ -4,15 +4,14 @@
     {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
+      "config": { "distDir": "dist" }
     }
   ],
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "https://keystokes-collection.vercel.app/api/$1"
-    }
-    ,
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
