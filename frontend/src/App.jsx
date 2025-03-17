@@ -116,7 +116,7 @@ function App() {
     const dataToSend = { dwellAvg,flightAvg,trajAvg};
   
     try {
-      const response = await fetch("http://localhost:8000/api/save-metrics", {
+      const response = await fetch("https://keystokes-collection.vercel.app/api/save-metrics", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSend),
