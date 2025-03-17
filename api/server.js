@@ -42,6 +42,9 @@ app.post('/api/save-metrics', async (req, res) => {
     res.status(500).json({ message: 'Error saving metrics', error: error.message });
   }
 });
+app.get("/", (req, res) => {
+  res.send("vannakkam");
+});
 
 // Start the server
 const PORT = process.env.PORT || 8000;
