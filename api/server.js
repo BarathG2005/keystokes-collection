@@ -1,46 +1,50 @@
-require('dotenv').config();
+require('dotenv').config(); // Loads variables from .env file if available
+
 const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
-const serverless = require('serverless-http');
-const models = require('./models/MetricsTable');
+const cors = require('cors');
+const Metric = require('./models/Metric');
 
 const app = express();
-app.use(express.json());
+
+// Middleware for CORS and JSON parsing
 app.use(cors());
+app.use(express.json());
 
-let isConnected = false; // Track MongoDB connection
+// Use the environment variable or fallback to a default connection string
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/keystrokes';
 
-async function connectDB() {
-  if (!isConnected) { // Only connect if not connected
-    await mongoose.connect(process.env.MONGO_URI);
-    isConnected = true;
-    console.log("MongoDB connected");
-  }
-}
+mongoose.connect(MONGO_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-// API Route
+// API endpoint to save keystroke metrics
 app.post('/api/save-metrics', async (req, res) => {
   try {
-    await connectDB(); // Ensure MongoDB is connected
+    
+    const { avgDwellTime, avgFlightTime, flightStdDev, wpm, hScore } = req.body;
 
-    const { dwellAvg, flightAvg, trajAvg } = req.body;
-    const creation = await models.create({ dwellAvg, flightAvg, trajAvg });
+    // Create a new Metric document using the Mongoose model
+    const newMetric = new Metric({
+      avgDwellTime,
+      avgFlightTime,
+      flightStdDev,
+      wpm,
+      hScore,
+    });
 
-    res.status(200).json({ creation });
+    // Save the document to the database
+    const savedMetric = await newMetric.save();
+
+    res.status(201).json({ message: 'Metrics saved successfully', data: savedMetric });
   } catch (error) {
-    console.error("Error saving data:", error);
-    res.status(500).json({ message: "Failed to save metrics", error });
+    console.error("Error saving metrics:", error);
+    res.status(500).json({ message: 'Error saving metrics', error: error.message });
   }
 });
 
-// Test Route
-app.get('/', (req, res) => {
-  res.json("Vanakkam");
+// Start the server
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
-// ❌ REMOVE: app.listen() - Not needed for Vercel
-
-// ✅ Correct Export for Vercel
-module.exports = app;
-module.exports.handler = serverless(app);
